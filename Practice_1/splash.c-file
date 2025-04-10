@@ -1,0 +1,76 @@
+// splash.c
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to clear screen using ANSI escape codes (cross-platform to some extent)
+void clear_screen() {
+    // This works on most UNIX terminals and modern Windows terminals
+    printf("\033[2J\033[H");
+}
+
+// Function to display right-angled triangles
+void display_triangles(int height) {
+    for (int i = 1; i <= height; i++) {
+        // Left triangle
+        for (int j = 1; j <= i; j++) {
+            printf("*");
+        }
+
+        // Padding space between triangles
+        for (int k = 0; k < (100 - 2 * i); k++) {
+            printf(" ");
+        }
+
+        // Right inverted triangle
+        for (int j = i; j >= 1; j--) {
+            printf("*");
+        }
+
+        printf("\n");
+    }
+}
+
+int main() {
+    char name[100];
+    char date[11]; // Format: yyyy-mm-dd (10 chars + null terminator)
+
+    printf("[Please enter the current date in the \"yyyy-mm-dd\" format]: ");
+    scanf("%10s", date);
+
+    printf("[Please enter your name]: ");
+    scanf(" %[^\n]", name); // Read input with spaces
+
+    printf("**The input has been processed successfully.**\n");
+
+    // Optional delay
+    for (int i = 3; i > 0; i--) {
+        printf("Loading splash screen in %d...\n", i);
+        fflush(stdout);
+        #ifdef _WIN32
+            system("timeout /nobreak /t 1 > nul");
+        #else
+            system("sleep 1");
+        #endif
+    }
+
+    clear_screen();
+
+    // Splash Screen Display
+    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
+
+    display_triangles(10);  // Draw left and right triangles
+
+    printf("\t\t\t\t\t\t[Magrathea ver 0.1]                              \n");
+    printf("       Magrathea, where a shining planet is created in a wasteland with no grass,\n");
+    printf(" a place where unseen potential is discovered and gems are polished by the hands of experts,\n");
+    printf("\t\t\t\t\t\tWelcome to Magrathea.\n\n");
+
+    display_triangles(10);  // Draw triangles again below text
+
+    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+    printf("[User]: %s\t\t\t\t\t\t[Execution Time]: %s\n", name, date);
+    printf("=============================================================================================================\n");
+
+    return 0;
+}
