@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define CANDIDATE_COUNT 6
+#define STRING_LEN 100
+
+// Define the structure for candidate information
+char candidate01[11][STRING_LEN], candidate02[11][STRING_LEN], candidate03[11][STRING_LEN];
+char candidate04[11][STRING_LEN], candidate05[11][STRING_LEN], candidate06[11][STRING_LEN];
+char (*member_info[CANDIDATE_COUNT])[11][STRING_LEN] = {
+    &candidate01, &candidate02, &candidate03, &candidate04, &candidate05, &candidate06
+};
+
+// Function to calculate age from birthdate string "YYYY/MM/DD"
+int calculate_age(const char *dob) {
+    int year, month, day;
+    sscanf(dob, "%d/%d/%d", &year, &month, &day);
+
+    time_t t = time(NULL);
+    struct tm *current = localtime(&t);
+
+    int age = current->tm_year + 1900 - year;
+    if ((current->tm_mon + 1 < month) || ((current->tm_mon + 1 == month) && current->tm_mday < day)) {
+        age--;
+    }
+    return age;
+}
+
+int main() {
+    char group_name[STRING_LEN];
+
+    printf("####################################\n");
+    printf("     Audition Candidate Data Entry\n");
+    printf("####################################\n");
+
+    printf("Enter audition group name: ");
+    fgets(group_name, sizeof(group_name), stdin);
+    group_name[strcspn(group_name, "\n")] = '\0'; // Remove newline
+
+    int i = 0;
+    while (i < CANDIDATE_COUNT) {
+        printf("\nEntering information for candidate %d.\n", i + 1);
+        printf("---------------------------------\n");
+        printf("1. Name: ");
+        fgets((*member_info[i])[0], STRING_LEN, stdin);
+        printf("2. Date of Birth (YYYY/MM/DD format): ");
+        fgets((*member_info[i])[1], STRING_LEN, stdin);
+        printf("3. Gender (F for Female, M for Male): ");
+        fgets((*member_info[i])[2], STRING_LEN, stdin);
+        printf("4. Email: ");
+        fgets((*member_info[i])[3], STRING_LEN, stdin);
+        printf("5. Nationality: ");
+        fgets((*member_info[i])[4], STRING_LEN, stdin);
+        printf("6. BMI: ");
+        fgets((*member_info[i])[5], STRING_LEN, stdin);
+        printf("7. Primary Skill: ");
+        fgets((*member_info[i])[6], STRING_LEN, stdin);
+        printf("8. Secondary Skill: ");
+        fgets((*member_info[i])[7], STRING_LEN, stdin);
+        printf("9. Korean Proficiency Level (TOPIK): ");
+        fgets((*member_info[i])[8], STRING_LEN, stdin);
+        printf("10. MBTI: ");
+        fgets((*member_info[i])[9], STRING_LEN, stdin);
+        printf("11. Introduction: ");
+        fgets((*member_info[i])[10], STRING_LEN, stdin);
+
+        // Remove newlines
+        for (int j = 0; j < 11; j++) {
+            (*member_info[i])[j][strcspn((*member_info[i])[j], "\n")] = '\0';
+        }
+        i++;
+    }
+
+    // Output
+    printf("\n####################################\n");
+    printf("     Audition Candidate Data Review\n");
+    printf("         Group: %s\n", group_name);
+    printf("####################################\n");
+
+    printf("=============================================================================================\n");
+    printf("Name            | Age | DOB       | Gender | Email                 | Nationality | BMI  | Primary Skill | Secondary Skill | TOPIK     | MBTI |\n");
+    printf("=============================================================================================\n");
+
+    for (int k = 0; k < CANDIDATE_COUNT; k++) {
+        int age = calculate_age((*member_info[k])[1]);
+
+        // Convert TOPIK level to display string
+        char topik_level[10];
+        if (strcmp((*member_info[k])[8], "0") == 0) {
+            strcpy(topik_level, "Native");
+        } else {
+            snprintf(topik_level, sizeof(topik_level), "%s", (*member_info[k])[8]);
+        }
+
+        printf("%-15s | %-3d | %-9s | %-6s | %-21s | %-11s | %-4s | %-13s | %-16s | %-9s | %-4s |\n",
+            (*member_info[k])[0], age, (*member_info[k])[1], (*member_info[k])[2],
+            (*member_info[k])[3], (*member_info[k])[4], (*member_info[k])[5],
+            (*member_info[k])[6], (*member_info[k])[7], topik_level, (*member_info[k])[9]);
+
+        printf("---------------------------------------------------------------------------------------------\n");
+        printf("%s\n", (*member_info[k])[10]);
+        printf("---------------------------------------------------------------------------------------------\n");
+    }
+
+    return 0;
+}
